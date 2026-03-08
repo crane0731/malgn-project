@@ -6,6 +6,7 @@ import content.malgn.dto.member.SignUpRequestDto;
 import content.malgn.dto.token.TokenResponseDto;
 import content.malgn.service.member.MemberService;
 import content.malgn.utils.ErrorCheckUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -73,8 +74,19 @@ public class LoginController {
         return ResponseEntity.ok(ApiResponse.success(token));
 
     }
-
+    
     /**
-     * 로그 아웃
+     * [컨트롤러]
+     * 로그아웃
+     * @return 성공메시지 or 에러 메시지
      */
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<?>> logout() {
+
+        //로그아웃
+        memberService.logout();
+
+        return ResponseEntity.ok(ApiResponse.success(Map.of("message", "로그아웃 성공")));
+
+    }
 }
