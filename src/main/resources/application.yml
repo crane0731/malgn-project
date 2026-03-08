@@ -1,0 +1,27 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/malgn
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.springframework.security: DEBUG
+
+
+jwt:
+  issuer: dlwnsgkr8318@naver.com
+  access-secret-key: asdasjvnoansckln12359449asddafkmsbxibuoiuoiuqwepppokkasf2asd
+  refresh-secret-key: asfacolkasndlknv3203klfamkld02asdkjfajkvnlancdkdklmasdklv
