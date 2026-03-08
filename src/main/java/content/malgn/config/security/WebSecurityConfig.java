@@ -41,6 +41,15 @@ public class WebSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * 인증 매니저 빈 등록 ,  Spring Security에서 커스텀 인증을 처리
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(customUserDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder);
+        return new ProviderManager(daoAuthenticationProvider);
+    }
 
     /**
      * 특정 HTTP 요쳥에 대한 웹 기반 보안 구성

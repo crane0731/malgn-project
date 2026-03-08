@@ -32,6 +32,23 @@ public class Member extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role",nullable = false)
-    private MemberRole role;//역할
+    private MemberRole role;//회원 권한
+
+    /**
+     * [생성 메서드]
+     * @param email 이메일
+     * @param password 패스워드
+     * @param name 이름
+     * @param role 권한
+     * @return Member
+     */
+    public static Member create(String email, String password, String name, MemberRole role) {
+        Member member = new Member();
+        member.email = email;
+        member.password = password;
+        member.name = name;
+        member.role = role;
+        return member;
+    }
 
 }
