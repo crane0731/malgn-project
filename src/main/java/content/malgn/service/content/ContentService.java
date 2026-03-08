@@ -2,6 +2,7 @@ package content.malgn.service.content;
 
 import content.malgn.domain.Content;
 import content.malgn.domain.Member;
+import content.malgn.dto.content.ContentDetailsResponseDto;
 import content.malgn.dto.content.CreateContentRequestDto;
 import content.malgn.dto.content.UpdateContentRequestDto;
 import content.malgn.exception.ContentCustomException;
@@ -24,6 +25,7 @@ public class ContentService {
 
     private final ContentRepository contentRepository;//콘텐츠 레파지토리
     private final MemberService memberService;//회원 서비스
+    private final ContentViewCounterBuffer buffer;//조회수 버퍼
 
     /**
      * [서비스 로직]
@@ -56,7 +58,7 @@ public class ContentService {
         Member member = memberService.getLoginMember();
 
         //콘텐츠 조회
-        Content content = contentRepository.findById(contentId).orElseThrow(() -> new ConcurrentModificationException(ErrorMessage.NOT_FOUND_CONTENT));
+        Content content = getById(contentId);
 
         //해당 콘텐츠가 회원이 작성한 것인지 검증 -> 아니라면 예외 발생
         validateContentOwner(content, member);
@@ -79,7 +81,7 @@ public class ContentService {
         Member member = memberService.getLoginMember();
 
         //콘텐츠 조회
-        Content content = contentRepository.findById(contentId).orElseThrow(() -> new ConcurrentModificationException(ErrorMessage.NOT_FOUND_CONTENT));
+        Content content = getById(contentId);
 
         //해당 콘텐츠가 회원이 작성한 것인지 검증 -> 아니라면 예외 발생
         validateContentOwner(content, member);
@@ -89,13 +91,37 @@ public class ContentService {
     }
 
     /**
-     * 컨텐츠 상세 조회
+     * [서비스 로직]
+     * 콘텐츠 상세 조회
+     * @param contentId 콘텐츠 아이디 PK
+     * @return ContentDetailsResponseDto
      */
+    public ContentDetailsResponseDto getContentDetails(Long contentId) {
+
+        //콘텐츠 조회
+        Content content = getById(contentId);
+
+        //버퍼에 조회수 누적
+        buffer.increase(contentId);
+
+        //응답 DTO 생성 + 반환
+        return ContentDetailsResponseDto.create(content);
+
+    }
 
     /**
      * 콘텐츠 목록 조회
      */
 
+
+    /**
+     * [조회]
+     * @param contentId 콘텐츠 아이디 PK
+     * @return Content
+     */
+    public Content getById(Long contentId) {
+        return contentRepository.findById(contentId).orElseThrow(() -> new ConcurrentModificationException(ErrorMessage.NOT_FOUND_CONTENT));
+    }
 
     //==해당 콘텐츠가 회원이 작성한 것인지 검증 -> 아니라면 예외 발생==//
     private void validateContentOwner(Content content, Member member) {

@@ -31,6 +31,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     @Query("""
     SELECT new content.malgn.dto.member.MemberInfoResponseDto(
+        m.id,
         m.email,
         m.name,
         m.createdDate,

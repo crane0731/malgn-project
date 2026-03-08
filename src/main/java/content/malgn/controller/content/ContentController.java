@@ -63,7 +63,7 @@ public class ContentController {
         return ResponseEntity.ok(ApiResponse.success(Map.of("message", "콘텐츠 삭제 성공")));
 
     }
-    
+
     /**
      * [컨트롤러]
      * 콘텐츠 수정
@@ -88,11 +88,18 @@ public class ContentController {
         return ResponseEntity.ok(ApiResponse.success(Map.of("message", "콘텐츠 수정 성공")));
 
     }
-
-
+    
     /**
-     * 컨텐츠 상세 조회
+     * [컨트롤러]
+     * 콘텐츠 상세 조회
+     * @param contentId 콘텐츠 아이디
+     * @return ContentDetailsResponseDto
      */
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> getContentDetails(@PathVariable("id") Long contentId) {
+        return ResponseEntity.ok(ApiResponse.success(contentService.getContentDetails(contentId)));
+
+    }
 
     /**
      * 콘텐츠 목록 조회
