@@ -9,7 +9,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
+import java.util.UUID;
 import java.time.LocalDateTime;
 
 /**
@@ -75,8 +75,12 @@ public class Member extends BaseTimeEntity {
 
         this.deleteStatus = DeleteStatus.DELETED;
         this.deletedDate = LocalDateTime.now();
-        this.email = "DELETED_" + this.email;
-        this.name = "DELETED_" + this.name;
+
+
+        String random = UUID.randomUUID().toString().substring(0,8);
+
+        this.email = "DELETED_" + random + "_" + this.email;
+        this.name = "DELETED_" + random + "_" + this.name;
     }
 
 }
