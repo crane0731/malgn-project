@@ -74,7 +74,7 @@ public class LoginController {
         return ResponseEntity.ok(ApiResponse.success(token));
 
     }
-    
+
     /**
      * [컨트롤러]
      * 로그아웃

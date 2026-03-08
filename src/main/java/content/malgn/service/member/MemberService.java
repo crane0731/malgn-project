@@ -130,12 +130,14 @@ public class MemberService {
     /**
      * [서비스 로직]
      * 회원 자신의 상세 정보 조회
-     * @param memberId 회원 아이디 (PK)
      * @return MemberInfoResponseDto
      */
-    public MemberInfoResponseDto getMyInfo(Long memberId){
+    public MemberInfoResponseDto getMyInfo(){
 
-        return memberRepository.findMemberInfo(memberId).orElseThrow(()->new MemberCustomException(ErrorMessage.NOT_FOUND_MEMBER));
+        //현재 로그인한 회원 조회
+        Member member = getLoginMember();
+
+        return memberRepository.findMemberInfo(member.getId()).orElseThrow(()->new MemberCustomException(ErrorMessage.NOT_FOUND_MEMBER));
 
     }
 
