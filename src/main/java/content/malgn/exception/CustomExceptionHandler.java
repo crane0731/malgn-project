@@ -25,4 +25,10 @@ public class CustomExceptionHandler {
         return ResponseEntity.badRequest().body(ApiResponse.error(ex.getMessage()));
     }
 
+    @ExceptionHandler(ContentCustomException.class)
+    public ResponseEntity<Object> handleContentCustomException(ContentCustomException ex) {
+        log.error("ContentCustomException: {}", ex.getMessage(), ex);
+        return ResponseEntity.badRequest().body(ApiResponse.error(ex.getMessage()));
+    }
+
 }

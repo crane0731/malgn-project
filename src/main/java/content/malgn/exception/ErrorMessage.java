@@ -5,7 +5,7 @@ package content.malgn.exception;
 public final class ErrorMessage {
 
     /**
-     * 공용
+     * 권한
      */
     public static final String NO_PERMISSION = "권한이 없습니다.";
 
@@ -17,7 +17,14 @@ public final class ErrorMessage {
     public static final String INVALID_TOKEN = "유효하지 않은 토큰입니다.";
     public static final String DUPLICATED_EMAIL = "이메일이 이미 존재합니다.";
     public static final String PASSWORD_MISMATCH = "비밀번호가 일치하지 않습니다.";
-    public static final String EXPIRED_TOKEN = "토큰이 만료되었습니다.";
     public static final String ALREADY_LOGOUT_MEMBER = "이미 로그아웃된 회원입니다.";
+
+    /**
+     * 콘텐츠
+     */
+    public static final String NOT_FOUND_CONTENT = "콘텐츠를 찾을 수 없습니다.";
+
+
+
 
 }

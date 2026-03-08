@@ -39,5 +39,29 @@ public class Content extends BaseAuditingEntity {
     @Column(name = "delete_stauts" , nullable = false)
     private DeleteStatus deleteStatus; //삭제 상태
 
+    /**
+     * [생성 메서드]
+     * @param member 회원
+     * @param title 제목
+     * @param description 내용
+     * @return Content
+     */
+    public static Content create(Member member, String title, String description) {
+        Content content = new Content();
+        content.member = member;
+        content.title = title;
+        content.description = description;
+        content.viewCount = 0L;
+        content.deleteStatus = DeleteStatus.UNDELETED;
+        return content;
+    }
+
+    /**
+     * [SOFT DELETE]
+     */
+    public void softDelete() {
+        deleteStatus = DeleteStatus.DELETED;
+    }
+
 
 }

@@ -29,7 +29,7 @@ public class MemberController {
         return ResponseEntity.ok(ApiResponse.success(memberService.getMyInfo()));
 
     }
-    
+
 
     /**
      * [컨트롤러]
