@@ -68,7 +68,7 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Stateless 모드
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/malgn/auth/signup/**","/api/malgn/auth/login"
+                        .requestMatchers("/api/malgn/auth/signup/**","/api/malgn/auth/login", "/api/malgn/auth/token"
                         )
                         .permitAll()
                         .requestMatchers("/api/malgn/admin/**").hasRole("ADMIN")

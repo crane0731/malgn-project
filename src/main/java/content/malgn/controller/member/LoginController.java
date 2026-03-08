@@ -1,7 +1,9 @@
 package content.malgn.controller.member;
 
 import content.malgn.api.ApiResponse;
+import content.malgn.dto.member.LoginRequestDto;
 import content.malgn.dto.member.SignUpRequestDto;
+import content.malgn.dto.token.TokenResponseDto;
 import content.malgn.service.member.MemberService;
 import content.malgn.utils.ErrorCheckUtil;
 import jakarta.validation.Valid;
@@ -47,9 +49,30 @@ public class LoginController {
 
     }
 
+
     /**
+     * [컨트롤러]
      * 로그인
+     * @param requestDto 로그인 요청 DTO
+     * @param bindingResult 에러메시지를 바인딩할 객체
+     * @return 성공 메시지 or 에러 메시지
      */
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<?>>login(@Valid @RequestBody LoginRequestDto requestDto, BindingResult bindingResult) {
+        // 오류 메시지를 담을 Map
+        Map<String, String> errorMessages = new HashMap<>();
+
+        //오류 메시지가 존재하면 이를 반환
+        if (ErrorCheckUtil.errorCheck(bindingResult, errorMessages)) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("입력값이 올바르지 않습니다.", errorMessages));
+        }
+
+        //로그인
+        TokenResponseDto token = memberService.login(requestDto);
+
+        return ResponseEntity.ok(ApiResponse.success(token));
+
+    }
 
     /**
      * 로그 아웃

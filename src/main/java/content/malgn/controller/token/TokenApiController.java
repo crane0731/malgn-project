@@ -25,7 +25,7 @@ public class TokenApiController {
      * [컨트롤러]
      * 새로운 엑세스 토큰 발급
      * @param authorizationHeader 인증 헤더
-     * @return TokenResponseDto
+     * @return TokenResponseDto 토큰 응답 DTO
      */
     @PostMapping("/token")
     public ResponseEntity<ApiResponse<?>> createNewAccessToken(@RequestHeader("Authorization")String authorizationHeader){
