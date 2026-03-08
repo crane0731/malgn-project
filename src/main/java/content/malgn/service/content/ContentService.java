@@ -3,11 +3,15 @@ package content.malgn.service.content;
 import content.malgn.domain.Content;
 import content.malgn.domain.Member;
 import content.malgn.dto.content.CreateContentRequestDto;
+import content.malgn.exception.ContentCustomException;
+import content.malgn.exception.ErrorMessage;
 import content.malgn.repository.ContentRepository;
 import content.malgn.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ConcurrentModificationException;
 
 /**
  * 콘텐츠 서비스
@@ -42,8 +46,27 @@ public class ContentService {
     }
 
     /**
-     * 컨텐츠 삭제
+     * [서비스 로직]
+     * 콘텐츠 삭제 (논리적 삭제)
+     * @param contentId 콘텐츠 아이디
      */
+    @Transactional
+    public void deleteContent(Long contentId) {
+
+        //현재 로그인한 회원 조회
+        Member member = memberService.getLoginMember();
+
+        //콘텐츠 조회
+        Content content = contentRepository.findById(contentId).orElseThrow(() -> new ConcurrentModificationException(ErrorMessage.NOT_FOUND_CONTENT));
+
+        //해당 콘텐츠가 회원이 작성한 것인지 검증 -> 아니라면 예외 발생
+        if(!content.getMember().getId().equals(member.getId())) {
+            throw new ContentCustomException(ErrorMessage.NO_PERMISSION);
+        }
+
+        //논리적 삭제 처리
+        content.softDelete();
+    }
 
 
     /**

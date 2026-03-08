@@ -38,7 +38,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
        (
             SELECT COUNT (c.id)
             FROM Content c
-            WHERE c.member.id = m.id
+            WHERE c.member.id = m.id and c.deleteStatus = 'UNDELETED'
        )
     )
     FROM Member m
