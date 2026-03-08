@@ -1,23 +1,31 @@
 package content.malgn.service.content;
 
+import content.malgn.api.PagedResponse;
 import content.malgn.domain.Content;
 import content.malgn.domain.Member;
 import content.malgn.dto.content.ContentDetailsResponseDto;
 import content.malgn.dto.content.CreateContentRequestDto;
+import content.malgn.dto.content.SearchContentListCond;
 import content.malgn.dto.content.UpdateContentRequestDto;
 import content.malgn.exception.ContentCustomException;
 import content.malgn.exception.ErrorMessage;
 import content.malgn.repository.ContentRepository;
 import content.malgn.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ConcurrentModificationException;
+import java.util.List;
 
 /**
  * 콘텐츠 서비스
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -110,8 +118,54 @@ public class ContentService {
     }
 
     /**
-     * 콘텐츠 목록 조회
+     * [서비스 로직]
+     * 캐시 전용
+     * 무조건 검색 첫페이지 캐싱
+     * @return PagedResponse<ContentDetailsResponseDto>
      */
+    @Cacheable(
+            value = "contentListFirstPage",
+            key = "'default'",
+            sync = true
+    )
+    public PagedResponse<ContentDetailsResponseDto> getFirstContents() {
+
+
+        log.info("캐싱!");
+
+        //비어있는 검색 조건 객체
+        SearchContentListCond cond = new SearchContentListCond();
+
+        //페이지된 결과 조회
+        Page<Content> pageResult = contentRepository.pageByCond(cond, PageRequest.of(0, 10));
+
+        //응답 dto 변환
+        List<ContentDetailsResponseDto> dtoList = pageResult.getContent().stream().map(ContentDetailsResponseDto::create).toList();
+
+        //페이징 전용 응답 DTO 생성 + 반환
+        return createPagedResponse(dtoList, pageResult);
+    }
+
+    /**
+     * [서비스 로직]
+     * 콘텐츠 목록 조회 + 검색 조건 + 정렬 + 페이징
+     * @param cond 검색 조건 DTO
+     * @param page 페이지 번호
+     * @return PagedResponse<ContentDetailsResponseDto>
+     */
+    public PagedResponse<ContentDetailsResponseDto> getContents(SearchContentListCond cond, int page) {
+
+        //페이지된 결과 조회
+        Page<Content> pageResult = contentRepository.pageByCond(cond, PageRequest.of(page, 10));
+
+        //응답 dto 변환
+        List<ContentDetailsResponseDto> dtoList = pageResult.getContent().stream().map(ContentDetailsResponseDto::create).toList();
+
+        //페이징 전용 응답 DTO 생성 + 반환
+        return createPagedResponse(dtoList, pageResult);
+    }
+
+
 
 
     /**
@@ -128,6 +182,18 @@ public class ContentService {
         if(!content.getMember().getId().equals(member.getId())) {
             throw new ContentCustomException(ErrorMessage.NO_PERMISSION);
         }
+    }
+    //페이징 전용 응답 DTO 생성 + 반환
+    private PagedResponse<ContentDetailsResponseDto> createPagedResponse(List<ContentDetailsResponseDto> dtoList, Page<Content> pageResult) {
+        return PagedResponse.<ContentDetailsResponseDto>builder()
+                .content(dtoList)
+                .page(pageResult.getNumber())
+                .size(pageResult.getSize())
+                .totalPages(pageResult.getTotalPages())
+                .totalElements(pageResult.getTotalElements())
+                .first(pageResult.isFirst())
+                .last(pageResult.isLast())
+                .build();
     }
 
 }

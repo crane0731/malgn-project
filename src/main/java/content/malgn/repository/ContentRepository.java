@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 /**
  * 콘텐츠 레파지토리
  */
-public interface ContentRepository extends JpaRepository<Content, Long> {
+public interface ContentRepository extends JpaRepository<Content, Long>, ContentRepositoryCustom {
 
     @Modifying
     @Query("""

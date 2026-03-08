@@ -2,10 +2,13 @@ package content.malgn.controller.content;
 
 import content.malgn.api.ApiResponse;
 import content.malgn.dto.content.CreateContentRequestDto;
+import content.malgn.dto.content.SearchContentListCond;
 import content.malgn.dto.content.UpdateContentRequestDto;
+import content.malgn.enums.ContentSortType;
 import content.malgn.service.content.ContentService;
 import content.malgn.utils.ErrorCheckUtil;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -100,9 +103,33 @@ public class ContentController {
 
     }
 
+
     /**
-     * 콘텐츠 목록 조회
+     * [컨트롤러]
+     * 검색 조건에 따라 콘텐츠 목록 조회 + 페이징
+     * 캐싱 기능
+     * @param memberName 회원 이름
+     * @param title 제목
+     * @param sortType 정렬 타입
+     * @param page 페이지 번호
+     * @return PagedResponse<ContentDetailsResponseDto>
      */
+    @GetMapping()
+    public ResponseEntity<ApiResponse<?>> getAllContents(@RequestParam(value = "memberName",required = false)String memberName,
+                                                         @RequestParam(value = "title",required = false)String title,
+                                                         @RequestParam(value = "sortType",required = false)ContentSortType sortType,
+                                                         @RequestParam(value = "page",defaultValue = "0")int page) {
+
+        //검색 조건을 담은 객체 생성
+        SearchContentListCond cond = SearchContentListCond.create(memberName, title, sortType);
+
+        if (page == 0 && cond.isEmpty()) {
+            return ResponseEntity.ok(ApiResponse.success(contentService.getFirstContents()));
+        }
+
+        return ResponseEntity.ok(ApiResponse.success(contentService.getContents(cond, page)));
+
+    }
 
 
 }
