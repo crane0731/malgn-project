@@ -38,7 +38,7 @@ public class Content extends BaseAuditingEntity {
     private Long viewCount; //조회수
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "delete_stauts" , nullable = false)
+    @Column(name = "delete_status" , nullable = false)
     private DeleteStatus deleteStatus; //삭제 상태
 
     /**
