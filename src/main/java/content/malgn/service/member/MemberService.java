@@ -1,5 +1,6 @@
 package content.malgn.service.member;
 
+import content.malgn.domain.Content;
 import content.malgn.domain.Member;
 import content.malgn.domain.Token;
 import content.malgn.domain.userdetails.CustomUserDetails;
@@ -10,6 +11,7 @@ import content.malgn.dto.token.TokenResponseDto;
 import content.malgn.enums.MemberRole;
 import content.malgn.exception.ErrorMessage;
 import content.malgn.exception.MemberCustomException;
+import content.malgn.repository.ContentRepository;
 import content.malgn.repository.MemberRepository;
 import content.malgn.service.token.RefreshTokenService;
 import content.malgn.service.token.TokenService;
@@ -35,6 +37,7 @@ public class MemberService {
     private final MemberRepository memberRepository;//회원 레파지토리
     private final RefreshTokenService refreshTokenService;//리프레쉬 토큰 서비스
     private final TokenService tokenService;//토큰 서비스
+    private final ContentRepository contentRepository;//콘텐츠 레파지토리
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder; //패스워드 인코더
     private final AuthenticationManager authenticationManager; //시큐리티 인증 매니저
@@ -151,11 +154,21 @@ public class MemberService {
         //현재 로그인한 회원 조회
         Member member = getLoginMember();
 
-        //회원 삭제
-        memberRepository.delete(member);
+        //회원 논리적 삭제처리
+        member.softDelete();
+
+        //회원의 게시글 조회
+        List<Content> contents = contentRepository.findByMember(member);
+
+        //회원의 게시글 삭제 처리
+        for (Content content : contents) {
+            content.softDelete();
+        }
 
         //리프레쉬 토큰 삭제
         refreshTokenService.delete(member.getId());
+
+
     }
 
 

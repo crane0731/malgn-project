@@ -1,11 +1,16 @@
 package content.malgn.domain;
 
 import content.malgn.domain.baseentity.BaseTimeEntity;
+import content.malgn.enums.DeleteStatus;
 import content.malgn.enums.MemberRole;
+import content.malgn.exception.ErrorMessage;
+import content.malgn.exception.MemberCustomException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 /**
  * 회원 정보
@@ -34,6 +39,13 @@ public class Member extends BaseTimeEntity {
     @Column(name = "role",nullable = false)
     private MemberRole role;//회원 권한
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "delete_status" , nullable = false)
+    private DeleteStatus deleteStatus; //삭제 상태
+
+    @Column(name = "deleted_date")
+    private LocalDateTime deletedDate;//탈퇴일
+
     /**
      * [생성 메서드]
      * @param email 이메일
@@ -48,7 +60,23 @@ public class Member extends BaseTimeEntity {
         member.password = password;
         member.name = name;
         member.role = role;
+        member.deleteStatus = DeleteStatus.UNDELETED;
+        member.deletedDate = null;
         return member;
+    }
+
+    /**
+     * [SOFT DELETE]
+     */
+    public void softDelete() {
+        if (this.deleteStatus == DeleteStatus.DELETED) {
+            throw new MemberCustomException(ErrorMessage.ALREADY_DELETED);
+        }
+
+        this.deleteStatus = DeleteStatus.DELETED;
+        this.deletedDate = LocalDateTime.now();
+        this.email = "DELETED_" + this.email;
+        this.name = "DELETED_" + this.name;
     }
 
 }
