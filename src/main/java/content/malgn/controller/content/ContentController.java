@@ -3,7 +3,6 @@ package content.malgn.controller.content;
 import content.malgn.api.ApiResponse;
 import content.malgn.dto.content.CreateContentRequestDto;
 import content.malgn.dto.content.UpdateContentRequestDto;
-import content.malgn.dto.member.LoginRequestDto;
 import content.malgn.service.content.ContentService;
 import content.malgn.utils.ErrorCheckUtil;
 import jakarta.validation.Valid;
@@ -88,7 +87,7 @@ public class ContentController {
         return ResponseEntity.ok(ApiResponse.success(Map.of("message", "콘텐츠 수정 성공")));
 
     }
-    
+
     /**
      * [컨트롤러]
      * 콘텐츠 상세 조회
