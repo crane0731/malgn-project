@@ -57,6 +57,16 @@ public class Content extends BaseAuditingEntity {
     }
 
     /**
+     * [update]
+     * @param title 제목
+     * @param description 내용
+     */
+    public void update (String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
+
+    /**
      * [SOFT DELETE]
      */
     public void softDelete() {

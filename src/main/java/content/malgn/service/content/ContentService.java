@@ -3,6 +3,7 @@ package content.malgn.service.content;
 import content.malgn.domain.Content;
 import content.malgn.domain.Member;
 import content.malgn.dto.content.CreateContentRequestDto;
+import content.malgn.dto.content.UpdateContentRequestDto;
 import content.malgn.exception.ContentCustomException;
 import content.malgn.exception.ErrorMessage;
 import content.malgn.repository.ContentRepository;
@@ -23,8 +24,6 @@ public class ContentService {
 
     private final ContentRepository contentRepository;//콘텐츠 레파지토리
     private final MemberService memberService;//회원 서비스
-
-
 
     /**
      * [서비스 로직]
@@ -60,9 +59,7 @@ public class ContentService {
         Content content = contentRepository.findById(contentId).orElseThrow(() -> new ConcurrentModificationException(ErrorMessage.NOT_FOUND_CONTENT));
 
         //해당 콘텐츠가 회원이 작성한 것인지 검증 -> 아니라면 예외 발생
-        if(!content.getMember().getId().equals(member.getId())) {
-            throw new ContentCustomException(ErrorMessage.NO_PERMISSION);
-        }
+        validateContentOwner(content, member);
 
         //논리적 삭제 처리
         content.softDelete();
@@ -70,8 +67,26 @@ public class ContentService {
 
 
     /**
-     * 컨텐츠 수정
+     * [서비스 로직]
+     * 콘텐츠 수정
+     * @param contentId 콘텐츠 아이디
+     * @param dto 콘텐츠 수정 요청 DTO
      */
+    @Transactional
+    public void update(Long contentId, UpdateContentRequestDto dto) {
+
+        //현재 로그인한 회원 조회
+        Member member = memberService.getLoginMember();
+
+        //콘텐츠 조회
+        Content content = contentRepository.findById(contentId).orElseThrow(() -> new ConcurrentModificationException(ErrorMessage.NOT_FOUND_CONTENT));
+
+        //해당 콘텐츠가 회원이 작성한 것인지 검증 -> 아니라면 예외 발생
+        validateContentOwner(content, member);
+
+        //수정 로직
+        content.update(dto.getTitle(), dto.getDescription());
+    }
 
     /**
      * 컨텐츠 상세 조회
@@ -81,5 +96,12 @@ public class ContentService {
      * 콘텐츠 목록 조회
      */
 
+
+    //==해당 콘텐츠가 회원이 작성한 것인지 검증 -> 아니라면 예외 발생==//
+    private void validateContentOwner(Content content, Member member) {
+        if(!content.getMember().getId().equals(member.getId())) {
+            throw new ContentCustomException(ErrorMessage.NO_PERMISSION);
+        }
+    }
 
 }
