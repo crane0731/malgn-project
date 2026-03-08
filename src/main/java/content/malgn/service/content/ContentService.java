@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.AbstractDocument;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -174,7 +175,7 @@ public class ContentService {
      * @return Content
      */
     public Content getById(Long contentId) {
-        return contentRepository.findById(contentId).orElseThrow(() -> new ConcurrentModificationException(ErrorMessage.NOT_FOUND_CONTENT));
+        return contentRepository.findByActive(contentId).orElseThrow(() -> new ConcurrentModificationException(ErrorMessage.NOT_FOUND_CONTENT));
     }
 
     //==해당 콘텐츠가 회원이 작성한 것인지 검증 -> 아니라면 예외 발생==//

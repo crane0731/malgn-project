@@ -3,6 +3,8 @@ package content.malgn.domain;
 import content.malgn.domain.baseentity.BaseAuditingEntity;
 import content.malgn.domain.baseentity.BaseTimeEntity;
 import content.malgn.enums.DeleteStatus;
+import content.malgn.exception.ContentCustomException;
+import content.malgn.exception.ErrorMessage;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -70,6 +72,10 @@ public class Content extends BaseAuditingEntity {
      * [SOFT DELETE]
      */
     public void softDelete() {
+
+        if(this.deleteStatus==DeleteStatus.DELETED){
+            throw new ContentCustomException(ErrorMessage.ALREADY_DELETED);
+        }
         deleteStatus = DeleteStatus.DELETED;
     }
 

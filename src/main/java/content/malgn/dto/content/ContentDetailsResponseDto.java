@@ -37,6 +37,11 @@ public class ContentDetailsResponseDto {
 
         dto.setContentId(content.getId());
         dto.setTitle(content.getTitle());
+
+        if(content.getDescription() == null) {
+            dto.setDescription("콘텐츠 내용이 없습니다.");
+        }
+
         dto.setDescription(content.getDescription());
         dto.setViewCount(content.getViewCount());
 

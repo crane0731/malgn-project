@@ -23,6 +23,7 @@ public final class ErrorMessage {
      * 콘텐츠
      */
     public static final String NOT_FOUND_CONTENT = "콘텐츠를 찾을 수 없습니다.";
+    public static final String ALREADY_DELETED = "이미 삭제되었습니다.";
 
 
 
